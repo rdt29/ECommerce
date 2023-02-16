@@ -1,0 +1,13 @@
+Tables=>
+
+> User 
+> Role
+> Products
+> Cateogy
+> orderID
+
+Relation=>
+
+user-Role => One to many
+user-Product => many to one 
+category-product => many to one  
