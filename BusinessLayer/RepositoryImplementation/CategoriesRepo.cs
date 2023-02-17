@@ -1,6 +1,7 @@
 ﻿using BusinessLayer.Repository;
 using DataAcessLayer.DBContext;
 using DataAcessLayer.Entity;
+using Microsoft.EntityFrameworkCore;
 
 namespace BusinessLayer.RepositoryImplementation
 {
@@ -25,6 +26,19 @@ namespace BusinessLayer.RepositoryImplementation
                 await _db.Categories.AddAsync(obj);
                 await _db.SaveChangesAsync();
                 return (obj);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<IList<Category>> GetAllCategories()
+        {
+            try
+            {
+                var cat = await _db.Categories.Include(x => x.Products).ToListAsync();
+                return (cat);
             }
             catch (Exception)
             {

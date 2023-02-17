@@ -1,5 +1,6 @@
 using ECommerce.ExtectionMethod;
 using ECommerce.GlobalException;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,14 +26,14 @@ builder.Services.AddSwaggerGen();
 string con = builder.Configuration.GetConnectionString("DefaultConnection");
 string table = "Logs";
 
-//var _Logger = new LoggerConfiguration()
+var _logger = new LoggerConfiguration()
+.MinimumLevel.Debug()
+    .WriteTo.MSSqlServer(con, table).CreateLogger();
+builder.Logging.AddSerilog(_logger);
+
+//Log.Logger = new LoggerConfiguration()
 //    .MinimumLevel.Debug()
 //    .WriteTo.MSSqlServer(con, table).CreateLogger();
-//builder.Logging.AddSerilog(_Logger);
-
-Log.Logger = new LoggerConfiguration()
-    .MinimumLevel.Debug()
-    .WriteTo.MSSqlServer(con, table).CreateLogger();
 
 #endregion Serilog Configuration
 

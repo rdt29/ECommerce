@@ -17,10 +17,17 @@ namespace ECommerce.Controllers
             _categories = categories;
         }
 
-        [HttpPost("Add Categories"), Authorize(Roles = "Admin")]
+        [HttpPost("AddCategories"), Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddCategories(String Name, int Id)
         {
             var res = await _categories.CategoryAdd(Name, Id);
+            return Ok(res);
+        }
+
+        [HttpGet("ViewCategories")]
+        public async Task<IActionResult> ViewCategories()
+        {
+            var res = await _categories.GetAllCategories();
             return Ok(res);
         }
     }

@@ -6,8 +6,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyModel;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json.Linq;
 using Serilog;
 using Swashbuckle.AspNetCore.Filters;
+using System.Net;
 using System.Reflection;
 using System.Text;
 
@@ -40,6 +42,9 @@ namespace ECommerce.ExtectionMethod
 
             return services;
         }
+        #endregion Dependency injection
+
+        #region JwT autherntication
 
         //?--------------------------JWT authentication ---------------------------------------------
 
@@ -61,7 +66,8 @@ namespace ECommerce.ExtectionMethod
             return services;
         }
 
-        #endregion Dependency injection
+        #endregion JwT autherntication
+    
 
         #region NewtonSoftJson
 
@@ -88,6 +94,7 @@ namespace ECommerce.ExtectionMethod
                     In = ParameterLocation.Header,
                     Name = "Authorization",
                     Type = SecuritySchemeType.ApiKey
+                    
                 });
                 options.OperationFilter<SecurityRequirementsOperationFilter>();
             }

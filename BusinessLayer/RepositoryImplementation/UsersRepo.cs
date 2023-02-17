@@ -48,9 +48,14 @@ namespace BusinessLayer.RepositoryImplementation
             }
         }
 
-        public async Task<IList<User>> AllUsers()
+        public async Task<IList<UserResponseDTO>> AllUsers()
         {
-            var data = await _db.Users.Include(x => x.Roles).ToListAsync();
+            var data = await _db.Users.Include(x => x.Roles).Select(x => new UserResponseDTO()
+            {
+                ID = x.ID,
+                Name = x.Name,
+                RoleName = x.Roles.RoleName
+            }).ToListAsync();
 
             return data;
         }
@@ -63,6 +68,7 @@ namespace BusinessLayer.RepositoryImplementation
                 List<Claim> claims = new List<Claim>()
             {
                 new Claim(ClaimTypes.Name , role.Name),
+                //new Claim (ClaimTypes.NameIdentifier , UserId),
                 new Claim(ClaimTypes.Role , role.Roles.RoleName),
             };
 
@@ -72,8 +78,10 @@ namespace BusinessLayer.RepositoryImplementation
                 var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
                 var token = new JwtSecurityToken(
                         claims: claims,
-                        expires: DateTime.Now.AddSeconds(60),
+                        expires: DateTime.Now.AddMinutes(5),
                         signingCredentials: cred
+                        
+                        
                         );
 
                 var JwtToken = new JwtSecurityTokenHandler().WriteToken(token);

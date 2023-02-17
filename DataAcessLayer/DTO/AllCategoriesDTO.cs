@@ -6,10 +6,7 @@ using System.Threading.Tasks;
 
 namespace DataAcessLayer.DTO
 {
-    public class UserResponseDTO
+    public class AllCategoriesDTO
     {
-        public int ID { get; set; }
-        public string Name { get; set; }
-        public string RoleName { get; set; }
     }
 }

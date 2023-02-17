@@ -10,8 +10,9 @@ namespace BusinessLayer.Repository
 {
     public interface IUser
     {
-      public   Task<UserDTO> AddUserasync(UserDTO obj, int role);
-      public  Task<IList<User>> AllUsers();
+        public Task<UserDTO> AddUserasync(UserDTO obj, int role);
+
+        public Task<IList<UserResponseDTO>> AllUsers();
 
         string Login(int UserId);
     }

@@ -10,5 +10,7 @@ namespace BusinessLayer.Repository
     public interface ICategories
     {
         public Task<Category> CategoryAdd(string name, int id);
+
+        public Task<IList<Category>> GetAllCategories();
     }
 }

@@ -18,14 +18,16 @@ namespace ECommerce.Controllers
             _product = product;
         }
 
-        [HttpPost("Adding Products"), Authorize(Roles = "Admin")]
+        [HttpPost("Adding Products")]
+        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Supplier")]
         public async Task<IActionResult> AddProducts(ProductDTO obj)
         {
             if (obj == null)
             {
                 return BadRequest("Details can't be null");
             }
-            var product = await _product.AddProductAsync(obj);
+            var product = await _product.AddProductAsync(obj, User.Identity);
             return Ok(product);
         }
     }
