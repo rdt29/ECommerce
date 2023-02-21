@@ -1,4 +1,5 @@
-﻿using DataAcessLayer.Entity;
+﻿using DataAcessLayer.DTO;
+using DataAcessLayer.Entity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,5 +13,9 @@ namespace BusinessLayer.Repository
         public Task<Category> CategoryAdd(string name, int id);
 
         public Task<IList<Category>> GetAllCategories();
+
+        public Task<Category> DeleteCategories(int id);
+
+        public Task<string> UpdateCategories(string name, int id);
     }
 }

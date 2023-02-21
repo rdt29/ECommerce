@@ -13,5 +13,7 @@ namespace DataAcessLayer.DBContext
         public DbSet<Roles> Roles { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Products> Products { get; set; }
+        public DbSet<OrderDetails> OrderDetails { get; set; }
+        public DbSet<OrdersTable> OrderTable { get; set; }
     }
 }

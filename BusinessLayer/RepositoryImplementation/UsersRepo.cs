@@ -2,6 +2,7 @@
 using DataAcessLayer.DBContext;
 using DataAcessLayer.DTO;
 using DataAcessLayer.Entity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -65,10 +66,15 @@ namespace BusinessLayer.RepositoryImplementation
             try
             {
                 var role = _db.Users.Where(x => x.ID == UserId).Include(x => x.Roles).FirstOrDefault();
+
+                if (role == null)
+                {
+                    return ("No user Found");
+                }
                 List<Claim> claims = new List<Claim>()
             {
                 new Claim(ClaimTypes.Name , role.Name),
-                //new Claim (ClaimTypes.NameIdentifier , UserId),
+                new Claim (ClaimTypes.NameIdentifier , UserId.ToString()),
                 new Claim(ClaimTypes.Role , role.Roles.RoleName),
             };
 
@@ -78,10 +84,9 @@ namespace BusinessLayer.RepositoryImplementation
                 var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
                 var token = new JwtSecurityToken(
                         claims: claims,
-                        expires: DateTime.Now.AddMinutes(5),
+                        expires: DateTime.Now.AddDays(1),
                         signingCredentials: cred
-                        
-                        
+
                         );
 
                 var JwtToken = new JwtSecurityTokenHandler().WriteToken(token);
@@ -93,5 +98,29 @@ namespace BusinessLayer.RepositoryImplementation
                 throw;
             }
         }
+        public async Task<UserDTO> DeleteUser(int id)
+        {
+            try
+            {
+            var deleteuser = _db.Users.Where(x=>x.ID== id).FirstOrDefault();  
+                if (deleteuser == null)
+                {
+                    throw new Exception($"No User Found with userID {id} ");
+                }
+                
+                _db.Users.Remove(deleteuser);
+                _db.SaveChanges();
+                return new UserDTO { ID = id ,  Name = deleteuser.Name };
+                
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            
     }
+        }
+
 }

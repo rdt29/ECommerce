@@ -15,6 +15,7 @@ namespace DataAcessLayer.Entity
         public int RoleId { get; set; }
 
         public ICollection<Products> products { get; set; }
+        public ICollection<OrdersTable> OrdersTables { get; set; }
 
         #region Navigation
 

@@ -19,7 +19,7 @@ namespace ECommerce.Controllers
             _role = role;
         }
 
-        [HttpPost("Add Roles"), Authorize(Roles = "Admin")]
+        [HttpPost("add-role"), Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddRoles(RoleDTO Role)
         {
             if (Role == null)
@@ -27,6 +27,13 @@ namespace ECommerce.Controllers
                 return BadRequest("Role Cant be Null");
             }
             var res = _role.GetRolesAsync(Role);
+            return Ok(res);
+        }
+
+        [HttpGet("view-role")]
+        public async Task<IActionResult> ViewRoles()
+        {
+            var res = await _role.ViewRolesAsync();
             return Ok(res);
         }
     }

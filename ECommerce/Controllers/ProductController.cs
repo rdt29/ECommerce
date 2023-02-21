@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata;
+using System.Security.Claims;
 
 namespace ECommerce.Controllers
 {
@@ -18,17 +19,39 @@ namespace ECommerce.Controllers
             _product = product;
         }
 
-        [HttpPost("Adding Products")]
-        //[Authorize(Roles = "Admin")]
-        [Authorize(Roles = "Supplier")]
+        [HttpPost("AddingProducts")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddProducts(ProductDTO obj)
         {
             if (obj == null)
             {
                 return BadRequest("Details can't be null");
             }
-            var product = await _product.AddProductAsync(obj, User.Identity);
+            string id = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            int userId = Convert.ToInt32(id);
+            var product = await _product.AddProductAsync(obj, userId);
             return Ok(product);
+        }
+
+        [HttpGet("view-all-products")]
+        public async Task<IActionResult> ViewProducts()
+        {
+            var res = await _product.View();
+            return Ok(res);
+        }
+
+        [HttpDelete("delete-product-byid")]
+        public async Task<IActionResult> DeleteProducts(int id)
+        {
+            var res = await _product.DeleteProducts(id);
+            return Ok(res);
+        }
+
+        [HttpPut("update-products")]
+        public async Task<IActionResult> UpdateProdcuts(ProductDTO obj)
+        {
+            var res = await _product.UpdateProduct(obj);
+            return Ok(res);
         }
     }
 }

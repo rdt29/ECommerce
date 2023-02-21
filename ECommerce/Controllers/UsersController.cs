@@ -17,7 +17,7 @@ namespace ECommerce.Controllers
             _user = user;
         }
 
-        [HttpGet("Get All Users"), Authorize(Roles = "Admin")]
+        [HttpGet("get-all-users"), Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAll()
         {
             var res = await _user.AllUsers();
@@ -25,20 +25,28 @@ namespace ECommerce.Controllers
             return Ok(res);
         }
 
-        [HttpPost("Add Customer")]
+        [HttpDelete("delete-user-by-id")]
+        public async Task<IActionResult> DeleteUser(int id)
+        {
+            var res = await _user.DeleteUser(id);
+
+            return Ok(res);
+        }
+
+        [HttpPost("add-customer")]
         public IActionResult AddCustomer(UserDTO obj)
         {
             if (obj == null)
             {
                 return BadRequest("Name cant be null");
             }
-            int role = 1;
+            int role = 2;
             var res = _user.AddUserasync(obj, role);
 
             return Ok(res);
         }
 
-        [HttpPost("Add Suppiler"), Authorize(Roles = "Admin")]
+        [HttpPost("add-suppiler"), Authorize(Roles = "Admin")]
         public IActionResult AddSuppiler(UserDTO obj)
         {
             if (obj == null)
@@ -51,7 +59,7 @@ namespace ECommerce.Controllers
             return Ok(res);
         }
 
-        [HttpPost("Login")]
+        [HttpPost("login")]
         public IActionResult Login(int UserId)
         {
             if (UserId == null)

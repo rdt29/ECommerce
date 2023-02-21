@@ -1,6 +1,6 @@
 using ECommerce.ExtectionMethod;
 using ECommerce.GlobalException;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);

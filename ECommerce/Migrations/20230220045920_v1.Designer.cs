@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ECommerce.Migrations
 {
     [DbContext(typeof(EcDbContext))]
-    [Migration("20230216062028_second")]
-    partial class second
+    [Migration("20230220045920_v1")]
+    partial class v1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -37,7 +37,50 @@ namespace ECommerce.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Category");
+                    b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("DataAcessLayer.Entity.OrderDetails", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
+
+                    b.ToTable("OrderDetails");
+                });
+
+            modelBuilder.Entity("DataAcessLayer.Entity.OrdersTable", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"), 1L, 1);
+
+                    b.Property<int>("CustomerID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ShippingDetails")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<float>("TotalPrice")
+                        .HasColumnType("real");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("OrderTable");
                 });
 
             modelBuilder.Entity("DataAcessLayer.Entity.Products", b =>
@@ -113,6 +156,17 @@ namespace ECommerce.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("DataAcessLayer.Entity.OrderDetails", b =>
+                {
+                    b.HasOne("DataAcessLayer.Entity.OrdersTable", "OrdersTable")
+                        .WithMany("OrderDetails")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("OrdersTable");
+                });
+
             modelBuilder.Entity("DataAcessLayer.Entity.Products", b =>
                 {
                     b.HasOne("DataAcessLayer.Entity.Category", "Category")
@@ -146,6 +200,11 @@ namespace ECommerce.Migrations
             modelBuilder.Entity("DataAcessLayer.Entity.Category", b =>
                 {
                     b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("DataAcessLayer.Entity.OrdersTable", b =>
+                {
+                    b.Navigation("OrderDetails");
                 });
 
             modelBuilder.Entity("DataAcessLayer.Entity.Roles", b =>

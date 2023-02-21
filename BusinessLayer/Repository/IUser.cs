@@ -15,5 +15,7 @@ namespace BusinessLayer.Repository
         public Task<IList<UserResponseDTO>> AllUsers();
 
         string Login(int UserId);
+
+        public Task<UserDTO> DeleteUser(int id);
     }
 }

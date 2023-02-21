@@ -13,6 +13,8 @@ namespace BusinessLayer.Repository
     {
         public Task<RoleDTO> GetRolesAsync(RoleDTO role);
 
+        public Task<IEnumerable<RoleDTO>> ViewRolesAsync();
+
         //public RoleDTO GetRoleAsync(int id);
     }
 }

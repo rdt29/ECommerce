@@ -39,6 +39,7 @@ namespace ECommerce.ExtectionMethod
             services.AddTransient<IUser, UsersRepo>();
             services.AddTransient<ICategories, CategoriesRepo>();
             services.AddTransient<IProduct, ProductsRepo>();
+            services.AddTransient<IOrders, OrderRepo>();
 
             return services;
         }

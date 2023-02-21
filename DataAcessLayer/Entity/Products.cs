@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -16,6 +17,8 @@ namespace DataAcessLayer.Entity
         public int CategoryID { get; set; }
 
         public int UserId { get; set; }
+
+        public ICollection<OrderDetails> OrderDetail { get; set; }
 
         #region Navigation
 

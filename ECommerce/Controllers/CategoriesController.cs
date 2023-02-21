@@ -17,18 +17,32 @@ namespace ECommerce.Controllers
             _categories = categories;
         }
 
-        [HttpPost("AddCategories"), Authorize(Roles = "Admin")]
+        [HttpPost("add-categories"), Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddCategories(String Name, int Id)
         {
             var res = await _categories.CategoryAdd(Name, Id);
             return Ok(res);
         }
 
-        [HttpGet("ViewCategories")]
+        [HttpGet("view-categories")]
         public async Task<IActionResult> ViewCategories()
         {
             var res = await _categories.GetAllCategories();
             return Ok(res);
+        }
+
+        [HttpDelete("Delete-by-id")]
+        public async Task<IActionResult> DeleteCategories(int id)
+        {
+            var delcat = await _categories.DeleteCategories(id);
+            return Ok(delcat);
+        }
+
+        [HttpPut("update-categories")]
+        public async Task<IActionResult> DeleteCategories(string name, int id)
+        {
+            var update = await _categories.UpdateCategories(name, id);
+            return Ok(update);
         }
     }
 }

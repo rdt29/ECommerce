@@ -6,13 +6,11 @@ using System.Threading.Tasks;
 
 namespace DataAcessLayer.DTO
 {
-    public class ProductDTO
+    public class UserOrderProductsViewDTO
     {
-        public int Id { get; set; }
         public string ProductName { get; set; }
+        public string ProductDesc { get; set; }
+        public int OrderID { get; set; }
         public int price { get; set; }
-        public string ProductDescription { get; set; }
-        public int CategoryID { get; set; }
-        //public int UserId { get; set; }
     }
 }
