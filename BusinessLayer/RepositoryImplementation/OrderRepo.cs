@@ -80,5 +80,24 @@ namespace BusinessLayer.RepositoryImplementation
                 throw;
             }
         }
+
+        public async Task<List<Products>> ViewSuppilerOrders(int id)
+        {
+            try
+            {
+                //var totalPrice = await _db.Products.Where(x => obj.ProductID.Contains(x.Id)).SumAsync(x => x.price);
+
+                var OrderProductId = await _db.OrderDetails.ToListAsync();
+                var ProductAdded = await _db.Products.Where(x => x.UserId == id).ToListAsync();
+
+                var Final = ProductAdded.Where(y => OrderProductId.Any(x => x.ProductId == y.Id)).ToList();
+
+                return Final;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }

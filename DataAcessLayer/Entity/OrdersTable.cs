@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DataAcessLayer.Entity
 {
-    public class OrdersTable
+    public class OrdersTable : Audit
     {
         [Key]
         public int ID { get; set; }

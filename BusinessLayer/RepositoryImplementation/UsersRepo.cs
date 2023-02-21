@@ -37,6 +37,7 @@ namespace BusinessLayer.RepositoryImplementation
                     ID = obj.ID,
                     Name = obj.Name,
                     RoleId = role,
+                    CreatedAt = DateTime.Now,
                 };
                 _db.Users.AddAsync(user);
                 _db.SaveChangesAsync();
@@ -98,29 +99,25 @@ namespace BusinessLayer.RepositoryImplementation
                 throw;
             }
         }
+
         public async Task<UserDTO> DeleteUser(int id)
         {
             try
             {
-            var deleteuser = _db.Users.Where(x=>x.ID== id).FirstOrDefault();  
+                var deleteuser = _db.Users.Where(x => x.ID == id).FirstOrDefault();
                 if (deleteuser == null)
                 {
                     throw new Exception($"No User Found with userID {id} ");
                 }
-                
+
                 _db.Users.Remove(deleteuser);
                 _db.SaveChanges();
-                return new UserDTO { ID = id ,  Name = deleteuser.Name };
-                
-
+                return new UserDTO { ID = id, Name = deleteuser.Name };
             }
             catch (Exception)
             {
-
                 throw;
             }
-            
-    }
         }
-
+    }
 }

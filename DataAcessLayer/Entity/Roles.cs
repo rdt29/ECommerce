@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DataAcessLayer.Entity
 {
-    public class Roles
+    public class Roles : Audit
     {
         public int ID { get; set; }
         public string RoleName { get; set; }

@@ -8,5 +8,7 @@ namespace BusinessLayer.Repository
         public Task<OrdersTable> order(OrderDTO obj, int userid);
 
         public Task<List<UserOrderViewDTO>> ViewOrders(int id);
+
+        public Task<List<Products>> ViewSuppilerOrders(int id);
     }
 }

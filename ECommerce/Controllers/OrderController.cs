@@ -29,14 +29,19 @@ namespace ECommerce.Controllers
         }
 
         [HttpGet("view-orders"), Authorize]
-
         public async Task<IActionResult> ViewOrders()
         {
             string id = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             int userId = Convert.ToInt32(id);
             var order = await _order.ViewOrders(userId);
-            return Ok(order);   
+            return Ok(order);
+        }
 
+        [HttpGet("View-suppilar-order")]
+        public async Task<IActionResult> viewSuppilarOrder(int id)
+        {
+            var order = await _order.ViewSuppilerOrders(id);
+            return Ok(order);
         }
     }
 }

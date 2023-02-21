@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DataAcessLayer.Entity
 {
-    public class Category
+    public class Category : Audit
     {
         public int Id { get; set; }
         public string CategoryName { get; set; }
