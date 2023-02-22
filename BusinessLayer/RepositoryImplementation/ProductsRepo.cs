@@ -31,7 +31,9 @@ namespace BusinessLayer.RepositoryImplementation
                     ProductDescription = product.ProductDescription,
                     price = product.price,
                     CategoryID = product.CategoryID,
-                    UserId = userId
+                    UserId = userId,
+                    CreatedAt = DateTime.Now,
+                    CreatedBy = userId,
                 };
                 await _db.Products.AddAsync(pro);
                 await _db.SaveChangesAsync();
@@ -91,7 +93,7 @@ namespace BusinessLayer.RepositoryImplementation
             }
         }
 
-        public async Task<ProductDTO> UpdateProduct(ProductDTO obj)
+        public async Task<ProductDTO> UpdateProduct(ProductDTO obj, int userId)
         {
             try
             {
@@ -101,6 +103,8 @@ namespace BusinessLayer.RepositoryImplementation
                 productupdate.price = obj.price;
                 productupdate.ProductDescription = obj.ProductDescription;
                 productupdate.CategoryID = obj.CategoryID;
+                productupdate.ModifiedAt = DateTime.Now;
+                productupdate.ModifiedBy = userId;
 
                 _db.Products.Update(productupdate);
                 _db.SaveChanges();

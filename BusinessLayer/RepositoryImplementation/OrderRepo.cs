@@ -31,7 +31,8 @@ namespace BusinessLayer.RepositoryImplementation
                 {
                     OrderDetails orderdetail = new OrderDetails();
                     orderdetail.ProductId = i;
-
+                    orderdetail.CreatedAt = DateTime.Now;
+                    orderdetail.CreatedBy = userid;
                     orderDetails.Add(orderdetail);
                 };
 
@@ -39,6 +40,8 @@ namespace BusinessLayer.RepositoryImplementation
                 {
                     TotalPrice = totalPrice,
                     CustomerID = userid,
+                    CreatedAt = DateTime.Now,
+                    CreatedBy = userid,
                     OrderDetails = orderDetails
                 };
                 await _db.OrderTable.AddAsync(table);

@@ -3,6 +3,7 @@ using DataAcessLayer.Entity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace ECommerce.Controllers
 {
@@ -18,9 +19,11 @@ namespace ECommerce.Controllers
         }
 
         [HttpPost("add-categories"), Authorize(Roles = "Admin")]
-        public async Task<IActionResult> AddCategories(String Name, int Id)
+        public async Task<IActionResult> AddCategories(string Name, int Id)
         {
-            var res = await _categories.CategoryAdd(Name, Id);
+            string Uid = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            int userId = Convert.ToInt32(Uid);
+            var res = await _categories.CategoryAdd(Name, Id , userId);
             return Ok(res);
         }
 
@@ -38,10 +41,13 @@ namespace ECommerce.Controllers
             return Ok(delcat);
         }
 
-        [HttpPut("update-categories")]
+        [HttpPut("update-categories"), Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteCategories(string name, int id)
         {
-            var update = await _categories.UpdateCategories(name, id);
+            string Uid = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            int userId = Convert.ToInt32(Uid);
+
+            var update = await _categories.UpdateCategories(name, id, userId);
             return Ok(update);
         }
     }

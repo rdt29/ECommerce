@@ -1,5 +1,6 @@
 ﻿using BusinessLayer.Repository;
 using DataAcessLayer.DTO;
+using DataAcessLayer.Entity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -47,10 +48,12 @@ namespace ECommerce.Controllers
             return Ok(res);
         }
 
-        [HttpPut("update-products")]
+        [HttpPut("update-products"), Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateProdcuts(ProductDTO obj)
         {
-            var res = await _product.UpdateProduct(obj);
+            string Uid = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            int userId = Convert.ToInt32(Uid);
+            var res = await _product.UpdateProduct(obj, userId);
             return Ok(res);
         }
     }

@@ -16,14 +16,16 @@ namespace BusinessLayer.RepositoryImplementation
             _db = db;
         }
 
-        public async Task<Category> CategoryAdd(string Name, int Id)
+        public async Task<Category> CategoryAdd(string Name, int Id, int userId)
         {
             try
             {
                 Category obj = new Category
                 {
                     CategoryName = Name,
-                    Id = Id
+                    Id = Id,
+                    CreatedAt = DateTime.Now,
+                    CreatedBy = userId,
                 };
                 await _db.Categories.AddAsync(obj);
                 await _db.SaveChangesAsync();
@@ -84,7 +86,7 @@ namespace BusinessLayer.RepositoryImplementation
             }
         }
 
-        public async Task<string> UpdateCategories(string name, int id)
+        public async Task<string> UpdateCategories(string name, int id, int UserId)
         {
             try
             {
@@ -94,8 +96,10 @@ namespace BusinessLayer.RepositoryImplementation
                     throw new Exception("Categories not Found");
                 }
 
-                cat.CategoryName= name;
-                
+                cat.CategoryName = name;
+                cat.ModifiedAt = DateTime.Now;
+                cat.ModifiedBy = UserId;
+
                 _db.Categories.Update(cat);
                 await _db.SaveChangesAsync();
                 return ($"Categories Name {name} is Updates Sucessfully");

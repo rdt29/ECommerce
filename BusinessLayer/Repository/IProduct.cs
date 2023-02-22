@@ -16,6 +16,6 @@ namespace BusinessLayer.Repository
 
         Task<string> DeleteProducts(int id);
 
-        Task<ProductDTO> UpdateProduct(ProductDTO obj);
+        Task<ProductDTO> UpdateProduct(ProductDTO obj, int userId);
     }
 }
