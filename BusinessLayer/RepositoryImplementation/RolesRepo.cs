@@ -1,4 +1,5 @@
-﻿using BusinessLayer.Repository;
+﻿using AutoMapper;
+using BusinessLayer.Repository;
 using DataAcessLayer.DBContext;
 using DataAcessLayer.DTO;
 using DataAcessLayer.Entity;
@@ -16,24 +17,33 @@ namespace BusinessLayer.RepositoryImplementation
     public class RolesRepo : IRoles
     {
         private readonly EcDbContext _db;
+        private readonly IMapper _mapper;
 
-        public RolesRepo(EcDbContext db)
+        public RolesRepo(EcDbContext db, IMapper mapper)
         {
             _db = db;
+            _mapper = mapper;
         }
 
-        public async Task<RoleDTO> GetRolesAsync(RoleDTO role)
+        public async Task<RoleDTO> AddRolesAsync(RoleDTO obj, int userId)
         {
             try
             {
-                Roles obj = new Roles()
-                {
-                    RoleName = role.RoleName,
-                    ID = role.ID,
-                };
-                _db.Roles.AddAsync(obj);
-                _db.SaveChangesAsync();
-                return role;
+                var Role = _mapper.Map<Roles>(obj);
+                //Roles obj = new Roles()
+                //{
+                //    RoleName = RoleName,
+                //    //ID = role.ID,
+                //    CreatedAt = DateTime.Now,
+                //    CreatedBy = userId,
+                //};
+                Role.CreatedAt = DateTime.Now;
+                Role.CreatedBy = userId;
+
+                await _db.Roles.AddAsync(Role);
+                _db.SaveChanges();
+
+                return (_mapper.Map<RoleDTO>(Role));
             }
             catch (Exception)
             {
@@ -41,12 +51,12 @@ namespace BusinessLayer.RepositoryImplementation
             }
         }
 
-        public async Task<IEnumerable<RoleDTO>> ViewRolesAsync()
+        public async Task<IEnumerable<RoleResponseDTO>> ViewRolesAsync()
         {
             try
             {
                 var obj = _db.Roles.Include(x => x.users)
-                    .Select(x => new RoleDTO()
+                    .Select(x => new RoleResponseDTO()
                     {
                         ID = x.ID,
                         RoleName = x.RoleName,

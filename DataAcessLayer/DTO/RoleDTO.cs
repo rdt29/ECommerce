@@ -12,7 +12,5 @@ namespace DataAcessLayer.DTO
     {
         public int ID { get; set; }
         public string RoleName { get; set; }
-
-        public List<UserRoleDTO> users { get; set; }
     }
 }

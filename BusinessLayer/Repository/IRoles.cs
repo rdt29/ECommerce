@@ -11,9 +11,9 @@ namespace BusinessLayer.Repository
 {
     public interface IRoles
     {
-        public Task<RoleDTO> GetRolesAsync(RoleDTO role);
+        public Task<RoleDTO> AddRolesAsync(RoleDTO obj, int userid);
 
-        public Task<IEnumerable<RoleDTO>> ViewRolesAsync();
+        public Task<IEnumerable<RoleResponseDTO>> ViewRolesAsync();
 
         //public RoleDTO GetRoleAsync(int id);
     }

@@ -25,7 +25,7 @@ namespace ECommerce.Controllers
             int userId = Convert.ToInt32(id);
 
             var res = _order.order(obj, userId);
-            return Ok(res);
+            return Ok(res.Result);
         }
 
         [HttpGet("view-orders"), Authorize]
@@ -37,7 +37,7 @@ namespace ECommerce.Controllers
             return Ok(order);
         }
 
-        [HttpGet("View-suppilar-order")]
+        [HttpGet("View-suppilier-order")]
         public async Task<IActionResult> viewSuppilarOrder(int id)
         {
             var order = await _order.ViewSuppilerOrders(id);

@@ -5,6 +5,7 @@ using DataAcessLayer.Entity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace ECommerce.Controllers
 {
@@ -20,13 +21,15 @@ namespace ECommerce.Controllers
         }
 
         [HttpPost("add-role"), Authorize(Roles = "Admin")]
-        public async Task<IActionResult> AddRoles(RoleDTO Role)
+        public async Task<IActionResult> AddRoles(RoleDTO obj)
         {
-            if (Role == null)
+            string Uid = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            int userId = Convert.ToInt32(Uid);
+            if (obj == null)
             {
                 return BadRequest("Role Cant be Null");
             }
-            var res = _role.GetRolesAsync(Role);
+            var res = await _role.AddRolesAsync(obj, userId);
             return Ok(res);
         }
 

@@ -1,3 +1,4 @@
+using AutoMapper;
 using ECommerce.ExtectionMethod;
 using ECommerce.GlobalException;
 using Microsoft.EntityFrameworkCore.Metadata;
@@ -18,6 +19,14 @@ builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+//?----------------------------------Automapper-------------------------------------
+builder.Services.AddAutoMapper(typeof(Program));
+
+//var automapper = new MapperConfiguration(item => item.AddProfile(new AutoMappers()));
+
+//IMapper mapper = automapper.CreateMapper();
+
+//builder.Services.AddSingleton(mapper);
 
 //?----------------------- Serilog Configuraion  --------------------------------
 

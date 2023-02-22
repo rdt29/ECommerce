@@ -1,10 +1,12 @@
-﻿using BusinessLayer.Repository;
+﻿using AutoMapper;
+using BusinessLayer.Repository;
 using DataAcessLayer.DBContext;
 using DataAcessLayer.DTO;
 using DataAcessLayer.Entity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,31 +16,40 @@ namespace BusinessLayer.RepositoryImplementation
     public class ProductsRepo : IProduct
     {
         private readonly EcDbContext _db;
+        private readonly IMapper _mapper;
 
-        public ProductsRepo(EcDbContext db)
+        public ProductsRepo(EcDbContext db, IMapper mapper)
         {
             _db = db;
+            _mapper = mapper;
         }
 
-        public async Task<Products> AddProductAsync(ProductDTO product, int userId)
+        public async Task<ProductDTO> AddProductAsync(ProductDTO product, int userId)
         {
             try
             {
-                Products pro = new Products()
-                {
-                    Id = product.Id,
-                    ProductName = product.ProductName,
-                    ProductDescription = product.ProductDescription,
-                    price = product.price,
-                    CategoryID = product.CategoryID,
-                    UserId = userId,
-                    CreatedAt = DateTime.Now,
-                    CreatedBy = userId,
-                };
-                await _db.Products.AddAsync(pro);
+                var Pro = _mapper.Map<Products>(product);
+                Pro.CreatedAt = DateTime.Now;
+                Pro.CreatedBy = userId;
+                Pro.UserId = userId;
+                Pro.Id = product.Id;
+
+                //Products pro = new Products()
+                //{
+                //    Id = product.Id,
+                //    ProductName = product.ProductName,
+                //    ProductDescription = product.ProductDescription,
+                //    price = product.price,
+                //    CategoryID = product.CategoryID,
+                //    UserId = userId,
+                //    CreatedAt = DateTime.Now,
+                //    CreatedBy = userId,
+                //};
+                await _db.Products.AddAsync(Pro);
                 await _db.SaveChangesAsync();
 
-                return (pro);
+              
+                return (_mapper.Map<ProductDTO>(Pro));
             }
             catch (Exception)
             {
@@ -64,6 +75,9 @@ namespace BusinessLayer.RepositoryImplementation
                         price = i.price,
                     };
                     Productresult.Add(pro);
+
+                    //var Pro = _mapper.Map<ProductDTO>(Productresult);
+                    //Productresult.Add(Pro);
                 }
                 return Productresult;
             }
