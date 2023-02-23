@@ -3,13 +3,11 @@ using BusinessLayer.Repository;
 using DataAcessLayer.DBContext;
 using DataAcessLayer.DTO;
 using DataAcessLayer.Entity;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+
 
 namespace BusinessLayer.RepositoryImplementation
 {
@@ -17,14 +15,17 @@ namespace BusinessLayer.RepositoryImplementation
     {
         private readonly EcDbContext _db;
         private readonly IMapper _mapper;
+        public static IWebHostEnvironment _webHostEnvironment;
 
-        public ProductsRepo(EcDbContext db, IMapper mapper)
+
+        public ProductsRepo(EcDbContext db, IMapper mapper ,IWebHostEnvironment webHostEnvironment)
         {
             _db = db;
             _mapper = mapper;
+            _webHostEnvironment = webHostEnvironment;
         }
 
-        public async Task<ProductDTO> AddProductAsync(ProductDTO product, int userId)
+        public async Task<ProductDTO> AddProductAsync(ProductDTO product, int userId, string Filepath)
         {
             try
             {
@@ -33,6 +34,7 @@ namespace BusinessLayer.RepositoryImplementation
                 Pro.CreatedBy = userId;
                 Pro.UserId = userId;
                 Pro.Id = product.Id;
+                Pro.ImageURL = Filepath;
 
                 //Products pro = new Products()
                 //{
@@ -48,7 +50,6 @@ namespace BusinessLayer.RepositoryImplementation
                 await _db.Products.AddAsync(Pro);
                 await _db.SaveChangesAsync();
 
-              
                 return (_mapper.Map<ProductDTO>(Pro));
             }
             catch (Exception)
@@ -57,16 +58,17 @@ namespace BusinessLayer.RepositoryImplementation
             }
         }
 
-        public async Task<List<ProductDTO>> View()
+        public async Task<List<ProductResponceDTO>> View()
         {
             try
             {
                 var products = await _db.Products.Include(x => x.Category).ToListAsync();
-                List<ProductDTO> Productresult = new List<ProductDTO>();
+                List<ProductResponceDTO> Productresult = new List<ProductResponceDTO>();
                 foreach (var i in products)
                 {
-                    ProductDTO pro = new ProductDTO()
+                    ProductResponceDTO pro = new ProductResponceDTO()
                     {
+                        ImageURL = i.ImageURL,
                         Id = i.Id,
                         ProductName = i.ProductName,
                         ProductDescription = i.ProductDescription,
@@ -113,15 +115,21 @@ namespace BusinessLayer.RepositoryImplementation
             {
                 var productupdate = _db.Products.Where(x => x.Id == obj.Id).FirstOrDefault();
 
-                productupdate.ProductName = obj.ProductName;
-                productupdate.price = obj.price;
-                productupdate.ProductDescription = obj.ProductDescription;
-                productupdate.CategoryID = obj.CategoryID;
-                productupdate.ModifiedAt = DateTime.Now;
-                productupdate.ModifiedBy = userId;
+                var pro = _mapper.Map(obj, productupdate); //_mapper.Map<Products>(obj);
 
-                _db.Products.Update(productupdate);
-                _db.SaveChanges();
+                pro.ModifiedAt = DateTime.Now;
+                pro.ModifiedBy = userId;
+                pro.UserId = userId;
+
+                //productupdate.ProductName = obj.ProductName;
+                //productupdate.price = obj.price;
+                //productupdate.ProductDescription = obj.ProductDescription;
+                //productupdate.CategoryID = obj.CategoryID;
+                //productupdate.ModifiedAt = DateTime.Now;
+                //productupdate.ModifiedBy = userId;
+
+                _db.Products.Update(pro);
+                await _db.SaveChangesAsync();
 
                 return (obj);
             }
@@ -129,6 +137,23 @@ namespace BusinessLayer.RepositoryImplementation
             {
                 throw;
             }
+        }
+
+        public async Task<string> GetProductImage(int id)
+        {
+            try
+            {
+            var filename =await  _db.Products.Where(x=>x.Id == id).Select(x=>x.ImageURL).FirstOrDefaultAsync();
+            return filename ;
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+           
+           
         }
     }
 }

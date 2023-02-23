@@ -34,14 +34,14 @@ namespace ECommerce.Controllers
         }
 
         [HttpPost("add-customer")]
-        public IActionResult AddCustomer(UserDTO obj)
+        public async Task<IActionResult> AddCustomer(UserDTO obj)
         {
             if (obj == null)
             {
                 return BadRequest("Name cant be null");
             }
             int role = 2;
-            var res = _user.AddUserasync(obj, role);
+            var res = await _user.AddUserasync(obj, role);
 
             return Ok(res);
         }

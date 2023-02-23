@@ -7,16 +7,14 @@ using System.Threading.Tasks;
 
 namespace DataAcessLayer.DTO
 {
-    public class ProductDTO
+    public class ProductResponceDTO
     {
-        public IFormFile fileupload { get; set; }
         public int Id { get; set; }
 
         public string ProductName { get; set; }
+        public string ImageURL { get; set; }
         public int price { get; set; }
         public string ProductDescription { get; set; }
         public int CategoryID { get; set; }
-
-        //public int UserId { get; set; }
     }
 }

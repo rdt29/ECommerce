@@ -10,6 +10,7 @@ namespace DataAcessLayer.Entity
         public string ProductDescription { get; set; }
         public int CategoryID { get; set; }
 
+        public string ImageURL { get; set; }
         public int UserId { get; set; }
 
         public ICollection<OrderDetails> OrderDetail { get; set; }

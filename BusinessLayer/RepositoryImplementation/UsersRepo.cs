@@ -1,4 +1,5 @@
-﻿using BusinessLayer.Repository;
+﻿using AutoMapper;
+using BusinessLayer.Repository;
 using DataAcessLayer.DBContext;
 using DataAcessLayer.DTO;
 using DataAcessLayer.Entity;
@@ -21,10 +22,12 @@ namespace BusinessLayer.RepositoryImplementation
     {
         private readonly EcDbContext _db;
         private readonly IConfiguration _configuration;
+        private readonly IMapper _mapper;
 
-        public UsersRepo(EcDbContext db, IConfiguration configuration)
+        public UsersRepo(EcDbContext db, IConfiguration configuration, IMapper mapper)
         {
             _configuration = configuration;
+            _mapper = mapper;
             _db = db;
         }
 
@@ -32,17 +35,22 @@ namespace BusinessLayer.RepositoryImplementation
         {
             try
             {
-                User user = new User()
-                {
-                    ID = obj.ID,
-                    Name = obj.Name,
-                    RoleId = role,
-                    CreatedAt = DateTime.Now,
-                };
-                _db.Users.AddAsync(user);
-                _db.SaveChangesAsync();
+                var user = _mapper.Map<User>(obj);
+                user.CreatedAt = DateTime.Now;
+                user.RoleId = role;
 
-                return (obj);
+                //User user = new User()
+                //{
+                //    ID = obj.ID,
+                //    Name = obj.Name,
+                //    RoleId = role,
+                //    CreatedAt = DateTime.Now,
+                //};
+
+                _db.Users.Add(user);
+                await _db.SaveChangesAsync();
+
+                return (_mapper.Map<UserDTO>(user));
             }
             catch (Exception)
             {
@@ -76,7 +84,8 @@ namespace BusinessLayer.RepositoryImplementation
             {
                 new Claim(ClaimTypes.Name , role.Name),
                 new Claim (ClaimTypes.NameIdentifier , UserId.ToString()),
-                new Claim(ClaimTypes.Role , role.Roles.RoleName),
+                new Claim(ClaimTypes.Role , role.Roles.RoleName ),
+                new Claim(ClaimTypes.Role , "ReadOnly" ),
             };
 
                 var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(

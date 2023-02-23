@@ -22,14 +22,17 @@ namespace ECommerce
             //?--------------------------------Products-----------------------------------------
             CreateMap<ProductDTO, Products>()
                 .ForMember(dest => dest.OrderDetail, opt => opt.Ignore())
-                .ForMember(dest => dest.user, opt => opt.Ignore())
-                .ForMember(dest => dest.Category, opt => opt.Ignore())
                 .ReverseMap();
 
+            CreateMap<ProductResponceDTO, Products>()
+               .ForMember(dest => dest.OrderDetail, opt => opt.Ignore())
+               .ReverseMap();
 
-
-
-            
+            //?--------------------------------User-----------------------------------------
+            CreateMap<UserDTO, User>()
+                .ForMember(dest => dest.products, opt => opt.Ignore())
+                .ForMember(dest => dest.OrdersTables, opt => opt.Ignore())
+                    .ReverseMap();
         }
     }
 }

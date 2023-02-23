@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DataAcessLayer.Entity
 {
-    public class ErrorDetails : Audit
+    public class ErrorDetails
     {
         public int? StatusCode { get; set; }
         public string? Message { get; set; }
