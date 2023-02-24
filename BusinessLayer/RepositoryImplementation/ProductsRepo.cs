@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 using System.Data;
 using Microsoft.AspNetCore.Mvc;
 
-
 namespace BusinessLayer.RepositoryImplementation
 {
     public class ProductsRepo : IProduct
@@ -17,8 +16,7 @@ namespace BusinessLayer.RepositoryImplementation
         private readonly IMapper _mapper;
         public static IWebHostEnvironment _webHostEnvironment;
 
-
-        public ProductsRepo(EcDbContext db, IMapper mapper ,IWebHostEnvironment webHostEnvironment)
+        public ProductsRepo(EcDbContext db, IMapper mapper, IWebHostEnvironment webHostEnvironment)
         {
             _db = db;
             _mapper = mapper;
@@ -143,17 +141,26 @@ namespace BusinessLayer.RepositoryImplementation
         {
             try
             {
-            var filename =await  _db.Products.Where(x=>x.Id == id).Select(x=>x.ImageURL).FirstOrDefaultAsync();
-            return filename ;
-
+                var filename = await _db.Products.Where(x => x.Id == id).Select(x => x.ImageURL).FirstOrDefaultAsync();
+                return filename;
             }
             catch (Exception)
             {
-
                 throw;
             }
-           
-           
+        }
+
+        public async Task<string> GetProductCategories(int id)
+        {
+            try
+            {
+                var CategoriesName = await _db.Categories.Where(x => x.Id == id).Select(x => x.CategoryName).FirstOrDefaultAsync();
+                return CategoriesName;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
     }
 }
