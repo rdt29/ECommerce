@@ -11,7 +11,7 @@ namespace BusinessLayer.Repository
 {
     public interface IProduct
     {
-        Task<ProductDTO> AddProductAsync(ProductDTO obj, int userid, string Filepath);
+        Task<ProductDTO> AddProductAsync(ProductDTO obj, int userid);
 
         Task<List<ProductResponceDTO>> View();
 

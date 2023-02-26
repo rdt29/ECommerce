@@ -1,4 +1,6 @@
-﻿using BusinessLayer.Repository;
+﻿using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
+using BusinessLayer.Repository;
 using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using DataAcessLayer.DTO;
@@ -9,6 +11,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata;
 using System.Net;
+using System.Reflection.Metadata;
 using System.Security.Claims;
 
 namespace ECommerce.Controllers
@@ -19,11 +22,15 @@ namespace ECommerce.Controllers
     {
         private readonly IProduct _product;
         public static IWebHostEnvironment _webHostEnvironment;
+        private readonly BlobServiceClient _blobServiceClient;
+        private readonly IConfiguration _configuration;
 
-        public ProductController(IProduct product, IWebHostEnvironment webHostEnvironment)
+        public ProductController(IProduct product, IWebHostEnvironment webHostEnvironment, BlobServiceClient blobServiceClient, IConfiguration configuration)
         {
             _product = product;
             _webHostEnvironment = webHostEnvironment;
+            _blobServiceClient = blobServiceClient;
+            _configuration = configuration;
         }
 
         #region AddingProducts
@@ -57,32 +64,62 @@ namespace ECommerce.Controllers
 
             #region Cloudfair
 
-            var cloudinary = new Cloudinary(new Account("dzwma7qcb", "591491493691445", "2bJuC3k7biQk4uZBwVu8Ok9YpPk"));
+            //var cloudinary = new Cloudinary(new Account("dzwma7qcb", "591491493691445", "2bJuC3k7biQk4uZBwVu8Ok9YpPk"));
 
-            // Upload
+            //// Upload
 
-            var stream = obj.fileupload.OpenReadStream();
+            //var stream = obj.fileupload.OpenReadStream();
 
-            var uploadParams = new ImageUploadParams()
-            {
-                //File = new FileDescription(@fileupload),
-                File = new FileDescription(obj.fileupload.Name, stream),
-                PublicId = obj.fileupload.FileName,
-                Folder = CategoriesFolderName,
-            };
+            //var uploadParams = new ImageUploadParams()
+            //{
+            //    //File = new FileDescription(@fileupload),
+            //    File = new FileDescription(obj.fileupload.Name, stream),
+            //    PublicId = obj.fileupload.FileName,
+            //    Folder = CategoriesFolderName,
+            //};
 
-            var uploadResult = cloudinary.Upload(uploadParams);
+            //var uploadResult = cloudinary.Upload(uploadParams);
 
-            //return Ok(uploadResult);
+            ////return Ok(uploadResult);
 
-            var filepath = uploadResult.SecureUrl.ToString();
+            //var filepath = uploadResult.SecureUrl.ToString();
 
             #endregion Cloudfair
+
+            #region AzureBlob
+
+            //var guid = Guid.NewGuid().ToString();
+
+            //var filepath = "";
+            //if (obj.fileupload.Length > 0)
+            //{
+            //    //var container = new BlobContainerClient("DefaultEndpointsProtocol=https;AccountName=rdtecommerce121;AccountKey=B0b5OdXjAplPEKu6zimtq6uxPbwl2zYO+Kaw1S4xifpVSrf8fL25gTM08Fmcgppm7lS2jbfRyr7n+AStiN3fGQ==;EndpointSuffix=core.windows.net", "electronic");
+            //    var container = new BlobContainerClient(_configuration.GetConnectionString("AzureBlobStorage"), CategoriesFolderName.ToLower());
+
+            //    var createResponse = await container.CreateIfNotExistsAsync();
+            //    if (createResponse != null && createResponse.GetRawResponse().Status == 201)
+            //        await container.SetAccessPolicyAsync(Azure.Storage.Blobs.Models.PublicAccessType.Blob);
+               
+            //    var Newfilename = guid+obj.fileupload.FileName;
+            //    var blob = container.GetBlobClient(Newfilename);
+            //    //await blob.DeleteIfExistsAsync(DeleteSnapshotsOption.IncludeSnapshots);
+            //    using (var fileStream = obj.fileupload.OpenReadStream())
+            //    {
+            //        await blob.UploadAsync(fileStream, new BlobHttpHeaders { ContentType = obj.fileupload.ContentType });
+            //    }
+
+            //    filepath = blob.Uri.ToString();
+            //    //return Ok(blob.Uri.ToString());
+            //}
+
+            //return BadRequest();
+
+            #endregion AzureBlob
 
             string id = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             int userId = Convert.ToInt32(id);
-            var product = await _product.AddProductAsync(obj, userId, filepath);
+            var product = await _product.AddProductAsync(obj, userId);
             return Ok(product);
         }
 
@@ -121,7 +158,7 @@ namespace ECommerce.Controllers
 
             #endregion localpath
 
-            #region cloudfare
+            #region cloudfare/azure("by_url")
 
             // get the image from the URL
 
@@ -131,7 +168,7 @@ namespace ECommerce.Controllers
             // return the image as a file
             return File(imageData, "image/png");
 
-            #endregion cloudfare
+            #endregion cloudfare/azure("by_url")
         }
 
         #endregion VIewProductsImage

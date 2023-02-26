@@ -1,4 +1,5 @@
-﻿using BusinessLayer.Repository;
+﻿using Azure.Storage.Blobs;
+using BusinessLayer.Repository;
 using BusinessLayer.RepositoryImplementation;
 using DataAcessLayer.DBContext;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -104,5 +105,21 @@ namespace ECommerce.ExtectionMethod
         }
 
         #endregion Swagger Api
+
+
+        #region Blobstorage
+
+        public static IServiceCollection Blobservice(this IServiceCollection services , IConfiguration configuration)
+        {
+            services.AddScoped(_ =>
+            {
+                return new BlobServiceClient(configuration.GetConnectionString("AzureBlobStorage"));
+            });
+
+
+            return services;
+        }
+
+        #endregion Blobstorage
     }
 }

@@ -7,6 +7,11 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
 using Microsoft.AspNetCore.Mvc;
+using System.Configuration;
+using Azure.Storage.Blobs;
+using Microsoft.Extensions.Configuration;
+using Azure.Storage.Blobs.Models;
+using System.Reflection.Metadata;
 
 namespace BusinessLayer.RepositoryImplementation
 {
@@ -15,24 +20,57 @@ namespace BusinessLayer.RepositoryImplementation
         private readonly EcDbContext _db;
         private readonly IMapper _mapper;
         public static IWebHostEnvironment _webHostEnvironment;
+        private readonly IConfiguration _configuration;
 
-        public ProductsRepo(EcDbContext db, IMapper mapper, IWebHostEnvironment webHostEnvironment)
+        public ProductsRepo(EcDbContext db, IMapper mapper, IWebHostEnvironment webHostEnvironment, IConfiguration configuration)
         {
             _db = db;
             _mapper = mapper;
-            _webHostEnvironment = webHostEnvironment;
+            _webHostEnvironment = webHostEnvironment;            _configuration = configuration;
         }
 
-        public async Task<ProductDTO> AddProductAsync(ProductDTO product, int userId, string Filepath)
+        public async Task<ProductDTO> AddProductAsync(ProductDTO product, int userId)
         {
             try
             {
+                var CategoriesFolderName = await _db.Categories.Where(x => x.Id == product.CategoryID).Select(x => x.CategoryName).FirstOrDefaultAsync();
+
+                #region AzureBlob
+
+                var guid = Guid.NewGuid().ToString();
+
+                var filepath = "";
+                if (product.fileupload.Length > 0)
+                {
+                    //var container = new BlobContainerClient("DefaultEndpointsProtocol=https;AccountName=rdtecommerce121;AccountKey=B0b5OdXjAplPEKu6zimtq6uxPbwl2zYO+Kaw1S4xifpVSrf8fL25gTM08Fmcgppm7lS2jbfRyr7n+AStiN3fGQ==;EndpointSuffix=core.windows.net", "electronic");
+                    var container = new BlobContainerClient(_configuration.GetConnectionString("AzureBlobStorage"), CategoriesFolderName.ToLower());
+
+                    var createResponse = await container.CreateIfNotExistsAsync();
+                    if (createResponse != null && createResponse.GetRawResponse().Status == 201)
+                        await container.SetAccessPolicyAsync(Azure.Storage.Blobs.Models.PublicAccessType.Blob);
+
+                    var Newfilename = guid + product.fileupload.FileName;
+                    var blob = container.GetBlobClient(Newfilename);
+                    //await blob.DeleteIfExistsAsync(DeleteSnapshotsOption.IncludeSnapshots);
+                    using (var fileStream = product.fileupload.OpenReadStream())
+                    {
+                        await blob.UploadAsync(fileStream, new BlobHttpHeaders { ContentType = product.fileupload.ContentType });
+                    }
+
+                    filepath = blob.Uri.ToString();
+                    //return Ok(blob.Uri.ToString());
+                }
+
+                //return BadRequest();
+
+                #endregion AzureBlob
+
                 var Pro = _mapper.Map<Products>(product);
                 Pro.CreatedAt = DateTime.Now;
                 Pro.CreatedBy = userId;
                 Pro.UserId = userId;
                 Pro.Id = product.Id;
-                Pro.ImageURL = Filepath;
+                Pro.ImageURL = filepath;
 
                 //Products pro = new Products()
                 //{

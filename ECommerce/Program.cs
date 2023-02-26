@@ -12,7 +12,8 @@ builder.Services.AddDatabase(builder.Configuration)
     .AddServices()
     .AddJWT(builder.Configuration)
     .AddNewtonJson()
-    .Swagger();
+    .Swagger()
+    .Blobservice(builder.Configuration);
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
