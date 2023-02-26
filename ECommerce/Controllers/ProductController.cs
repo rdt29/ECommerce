@@ -38,7 +38,7 @@ namespace ECommerce.Controllers
         [HttpPost("AddingProducts"), Authorize(Roles = "Admin , Supplier")]
         public async Task<IActionResult> AddProducts([FromForm] ProductDTO obj)
         {
-            var CategoriesFolderName = await _product.GetProductCategories(obj.CategoryID);
+            // var CategoriesFolderName = await _product.GetProductCategories(obj.CategoryID);
 
             #region localfile
 
@@ -99,7 +99,7 @@ namespace ECommerce.Controllers
             //    var createResponse = await container.CreateIfNotExistsAsync();
             //    if (createResponse != null && createResponse.GetRawResponse().Status == 201)
             //        await container.SetAccessPolicyAsync(Azure.Storage.Blobs.Models.PublicAccessType.Blob);
-               
+
             //    var Newfilename = guid+obj.fileupload.FileName;
             //    var blob = container.GetBlobClient(Newfilename);
             //    //await blob.DeleteIfExistsAsync(DeleteSnapshotsOption.IncludeSnapshots);

@@ -26,7 +26,8 @@ namespace BusinessLayer.RepositoryImplementation
         {
             _db = db;
             _mapper = mapper;
-            _webHostEnvironment = webHostEnvironment;            _configuration = configuration;
+            _webHostEnvironment = webHostEnvironment;
+            _configuration = configuration;
         }
 
         public async Task<ProductDTO> AddProductAsync(ProductDTO product, int userId)
@@ -188,17 +189,17 @@ namespace BusinessLayer.RepositoryImplementation
             }
         }
 
-        public async Task<string> GetProductCategories(int id)
-        {
-            try
-            {
-                var CategoriesName = await _db.Categories.Where(x => x.Id == id).Select(x => x.CategoryName).FirstOrDefaultAsync();
-                return CategoriesName;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
+        //public async Task<string> GetProductCategories(int id)
+        //{
+        //    try
+        //    {
+        //        var CategoriesName = await _db.Categories.Where(x => x.Id == id).Select(x => x.CategoryName).FirstOrDefaultAsync();
+        //        return CategoriesName;
+        //    }
+        //    catch (Exception)
+        //    {
+        //        throw;
+        //    }
+        //}
     }
 }
