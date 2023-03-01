@@ -10,5 +10,6 @@ namespace BusinessLayer.Repository
         public Task<List<UserOrderViewDTO>> ViewOrders(int id);
 
         public Task<List<Products>> ViewSuppilerOrders(int id);
+        public Task<byte[]> Invoice(int id);
     }
 }

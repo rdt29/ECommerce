@@ -10,7 +10,7 @@ namespace DataAcessLayer.DTO
     {
         public string UserName { get; set; }
         public int UserId { get; set; }
-        //public int OrderID { get; set; }
+        public int OrderID { get; set; }
         public int TotalPrice { get; set; }
 
         public ICollection<UserOrderProductsViewDTO> Productdet { get; set; }
