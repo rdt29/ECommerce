@@ -12,16 +12,28 @@ using System.Text;
 using System.Threading.Tasks;
 using TheArtOfDev.HtmlRenderer.PdfSharp;
 using System.Security.Cryptography;
+using SendGrid.Helpers.Mail;
+using SendGrid;
+using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.ActionConstraints;
+using Microsoft.AspNetCore.Mvc;
 
 namespace BusinessLayer.RepositoryImplementation
 {
     public class OrderRepo : IOrders
     {
         private readonly EcDbContext _db;
+        private readonly IConfiguration _configuration;
+        private readonly ISendGridClient _sendGridClient;
+        private readonly IMailService _mailService;
 
-        public OrderRepo(EcDbContext db)
+        public OrderRepo(EcDbContext db, IConfiguration configuration, ISendGridClient sendGridClient, IMailService mailService)
         {
             _db = db;
+            _configuration = configuration;
+            _sendGridClient = sendGridClient;
+            _mailService = mailService;
         }
 
         public async Task<byte[]> Invoice(int Orderid)
@@ -132,10 +144,100 @@ namespace BusinessLayer.RepositoryImplementation
                     CreatedBy = userid,
                     OrderDetails = orderDetails
                 };
+
                 await _db.OrderTable.AddAsync(table);
                 await _db.SaveChangesAsync();
 
                 return (table);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<string> SendMail(int Orderid, string ToEmail)
+        {
+            try
+            {
+                var order = await _db.OrderTable.Where(x => x.ID == Orderid).Include(x => x.OrderDetails).ThenInclude(x => x.Product).ToListAsync();
+                var UserId = order.Select(x => x.CustomerID).FirstOrDefault();
+                var UserName = await _db.Users.Where(x => x.ID == UserId).Select(x => x.Name).FirstOrDefaultAsync();
+                string html = "<!DOCTYPE html><html><head><meta charset='UTF-8'><title>Order Detail</title><style type='text/css'>body {	font-family: Arial, sans-serif;		font-size: 14px;			margin: 0;			padding: 0;		}" +
+                    ".greeting { color: red; text-align: center;}" +
+                    "		h1 {		font-size: 24px;			font-weight: bold;			margin-top: 20px;		margin-bottom: 20px;			text-align: center;		}		" +
+                    "table {border-collapse: collapse;" +
+                    "margin: 0 auto;width: 100%;}" +
+                    "th, td " +
+                    "{border: 1px solid #ccc; " +
+                    "padding: 10px;		" +
+                    "text-align: center;}" +
+                    "th {background-color: #f0f0f0;	font-weight: bold;}" +
+                    "#left{font-weight: bold;float: left;}" +
+                    "</style>" +
+                    "</head>" +
+                    "<body>" +
+                    "<h2  id='left'>RDT-Ecommerce</h2>" +
+                    "<h1>Order Detail</h1>" +
+                    "<br>" +
+                    "<h3>Invoice</h3>" +
+                    "<hr>" +
+                    "<h2><b>Billed To,</h2>" +
+                    "<h4>" + UserName + "</h4>" +
+
+                    "<table>		" +
+                    "<thead>" +
+                    "<tr>" +
+                    "<th>Product Name</th>" +
+                    "<th>Quantity</th>" +
+                    "<th>Price</th>" +
+                    "<th>Total</th>" +
+                    "</tr>" +
+                    "</thead>" +
+                    "<tbody>"
+                  ;
+                var TotalPrice = 0;
+                foreach (var i in order)
+                {
+                    TotalPrice = i.TotalPrice;
+                    foreach (var j in i.OrderDetails)
+                    {
+                        html += "<tr>" +
+                        "<td>" + j.Product.ProductName + "</td>" +
+                        "<td>1</td>" +
+                        "<td>" + j.Product.price + "</td>" +
+                        "<td>" + j.Product.price + "</td>" +
+                        "</tr>";
+                    }
+                }
+                html +=
+
+                   "<tr>" +
+                    "<td colspan='3' style='text-align:right'>Total:</td>" +
+                    "<td>" + TotalPrice + "</td>" +
+                    "</tr>" +
+                    "</tbody>" +
+                    "</table>" +
+                   "<h3 class = 'greeting'>Thankyou for choosing us </h3> " +
+                    "</body>" +
+                    "</html>";
+
+                var document = new PdfDocument();
+                string Content = html;
+                PdfGenerator.AddPdfPages(document, Content, PageSize.A4);
+                byte[] response = null;
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    document.Save(ms);
+                    response = ms.ToArray();
+                }
+
+                string fileName = "Invoice.pdf";
+                string Text = "order Invoice";
+                string subject = "Invoice";
+                var MailResponse = await _mailService.MailSendWithAttachment(response, ToEmail, html, Text, subject , fileName);
+
+               return MailResponse;
             }
             catch (Exception)
             {

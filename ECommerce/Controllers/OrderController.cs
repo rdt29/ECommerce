@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PdfSharpCore;
 using PdfSharpCore.Pdf;
+using SendGrid;
+using SendGrid.Helpers.Mail;
 using System.Drawing.Printing;
 using System.Security.Claims;
 using TheArtOfDev.HtmlRenderer.PdfSharp;
@@ -17,10 +19,14 @@ namespace ECommerce.Controllers
     public class OrderController : ControllerBase
     {
         private readonly IOrders _order;
+        private readonly IConfiguration _configuration;
+        private readonly ISendGridClient _sendGridClient;
 
-        public OrderController(IOrders orders)
+        public OrderController(IOrders orders, IConfiguration configuration, ISendGridClient sendGridClient)
         {
             _order = orders;
+            _configuration = configuration;
+            _sendGridClient = sendGridClient;
         }
 
         [HttpPost("order-products"), Authorize]
@@ -51,11 +57,20 @@ namespace ECommerce.Controllers
             //return pdf;
         }
 
+        [HttpPost("EmailService")]
+        public async Task<IActionResult> SendMail(int OrderId, string ToMail)
+        {
+            var response =await  _order.SendMail(OrderId, ToMail);
+            return Ok(response);
+        }
+
         [HttpGet("View-suppilier-order")]
         public async Task<IActionResult> viewSuppilarOrder(int id)
         {
             var order = await _order.ViewSuppilerOrders(id);
             return Ok(order);
         }
+
+       
     }
 }

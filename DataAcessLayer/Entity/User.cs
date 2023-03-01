@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics;
@@ -12,7 +13,9 @@ namespace DataAcessLayer.Entity
     {
         public int ID { get; set; }
         public string Name { get; set; }
+        public string Email { get; set; }
         public int RoleId { get; set; }
+
 
         public ICollection<Products> products { get; set; }
         public ICollection<OrdersTable> OrdersTables { get; set; }
