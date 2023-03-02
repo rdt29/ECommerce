@@ -34,8 +34,9 @@ namespace ECommerce.Controllers
         {
             string id = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             int userId = Convert.ToInt32(id);
+            string Email = User.FindFirst(ClaimTypes.Email)?.Value;
 
-            var res = _order.order(obj, userId);
+            var res = _order.order(obj, userId, Email);
             return Ok(res.Result);
         }
 
@@ -60,7 +61,14 @@ namespace ECommerce.Controllers
         [HttpPost("EmailService")]
         public async Task<IActionResult> SendMail(int OrderId, string ToMail)
         {
-            var response =await  _order.SendMail(OrderId, ToMail);
+            var response = await _order.SendMail(OrderId, ToMail);
+            return Ok(response);
+        }
+
+        [HttpPost("EmailService/SMTP")]
+        public async Task<IActionResult> SendMailSMTP(int OrderId, string ToMail)
+        {
+            var response = await _order.SendMailSMTP(OrderId, ToMail);
             return Ok(response);
         }
 
@@ -70,7 +78,5 @@ namespace ECommerce.Controllers
             var order = await _order.ViewSuppilerOrders(id);
             return Ok(order);
         }
-
-       
     }
 }

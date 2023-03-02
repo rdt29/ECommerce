@@ -1,4 +1,5 @@
 using AutoMapper;
+using BusinessLayer.RepositoryImplementation;
 using ECommerce.ExtectionMethod;
 using ECommerce.GlobalException;
 using Microsoft.EntityFrameworkCore.Metadata;
@@ -33,6 +34,9 @@ builder.Services.AddSendGrid(options =>
 });
 
 #endregion sendgrid
+
+//?----------------------------smtp mail---------------------------------------------------------------
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 
 //?----------------------------------Automapper-------------------------------------
 builder.Services.AddAutoMapper(typeof(Program));

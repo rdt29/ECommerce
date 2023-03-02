@@ -6,6 +6,8 @@ namespace BusinessLayer.Repository
     {
         Task<string> MailSend(string ToEmail, string htmlcontent, string plaincontent, string subject);
 
-        Task<string> MailSendWithAttachment(byte[] file , string ToEmail, string htmlcontent, string plaincontent, string subject , string filename);
+        Task<string> MailSendWithAttachment(byte[] file, string ToEmail, string htmlcontent, string plaincontent, string subject, string filename);
+
+        Task<string> SMTPMail(byte[] file, string ToEmail, string htmlcontent, string plaincontent, string subject, string filename);
     }
 }
