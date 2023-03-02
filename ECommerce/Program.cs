@@ -1,7 +1,9 @@
 using AutoMapper;
+using BusinessLayer.RepositoryImplementation;
 using ECommerce.ExtectionMethod;
 using ECommerce.GlobalException;
 using Microsoft.EntityFrameworkCore.Metadata;
+using SendGrid.Extensions.DependencyInjection;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,6 +22,22 @@ builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+//?--------------------------------------SendGrid-------------------------------------------------------
+
+#region sendgrid
+
+builder.Services.AddSendGrid(options =>
+{
+    options.ApiKey = builder.Configuration
+    .GetSection("SendGridEmailSettings").GetValue<string>("APIKey");
+});
+
+#endregion sendgrid
+
+//?----------------------------smtp mail---------------------------------------------------------------
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+
 //?----------------------------------Automapper-------------------------------------
 builder.Services.AddAutoMapper(typeof(Program));
 

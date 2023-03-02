@@ -41,9 +41,11 @@ namespace ECommerce.ExtectionMethod
             services.AddTransient<ICategories, CategoriesRepo>();
             services.AddTransient<IProduct, ProductsRepo>();
             services.AddTransient<IOrders, OrderRepo>();
+            services.AddTransient<IMailService, MailService>();
 
             return services;
         }
+
         #endregion Dependency injection
 
         #region JwT autherntication
@@ -69,7 +71,6 @@ namespace ECommerce.ExtectionMethod
         }
 
         #endregion JwT autherntication
-    
 
         #region NewtonSoftJson
 
@@ -96,7 +97,6 @@ namespace ECommerce.ExtectionMethod
                     In = ParameterLocation.Header,
                     Name = "Authorization",
                     Type = SecuritySchemeType.ApiKey
-                    
                 });
                 options.OperationFilter<SecurityRequirementsOperationFilter>();
             }
@@ -106,16 +106,14 @@ namespace ECommerce.ExtectionMethod
 
         #endregion Swagger Api
 
-
         #region Blobstorage
 
-        public static IServiceCollection Blobservice(this IServiceCollection services , IConfiguration configuration)
+        public static IServiceCollection Blobservice(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddScoped(_ =>
             {
                 return new BlobServiceClient(configuration.GetConnectionString("AzureBlobStorage"));
             });
-
 
             return services;
         }

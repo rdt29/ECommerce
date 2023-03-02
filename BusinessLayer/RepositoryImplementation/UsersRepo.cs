@@ -78,7 +78,7 @@ namespace BusinessLayer.RepositoryImplementation
                 new Claim(ClaimTypes.Name , role.Name),
                 new Claim (ClaimTypes.NameIdentifier , UserId.ToString()),
                 new Claim(ClaimTypes.Role , role.Roles.RoleName ),
-                new Claim(ClaimTypes.Role , "ReadOnly" ),
+                new Claim(ClaimTypes.Email , role.Email ),
             };
 
                 var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(
