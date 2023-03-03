@@ -5,12 +5,15 @@ using ECommerce.GlobalException;
 using Microsoft.EntityFrameworkCore.Metadata;
 using SendGrid.Extensions.DependencyInjection;
 using Serilog;
+using Microsoft.Extensions.Azure;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddDatabase(builder.Configuration)
+builder.Services
+    //.AddDatabase(builder.Configuration)
+    .AddDatabaseAzure(builder.Configuration)
     .AddServices()
     .AddJWT(builder.Configuration)
     .AddNewtonJson()
@@ -58,6 +61,11 @@ var _logger = new LoggerConfiguration()
 .MinimumLevel.Debug()
     .WriteTo.MSSqlServer(con, table).CreateLogger();
 builder.Logging.AddSerilog(_logger);
+builder.Services.AddAzureClients(clientBuilder =>
+{
+    clientBuilder.AddBlobServiceClient(builder.Configuration["ConnectionStrings:AzureBlobStorage:blob"], preferMsi: true);
+    clientBuilder.AddQueueServiceClient(builder.Configuration["ConnectionStrings:AzureBlobStorage:queue"], preferMsi: true);
+});
 
 //Log.Logger = new LoggerConfiguration()
 //    .MinimumLevel.Debug()
@@ -68,11 +76,11 @@ builder.Logging.AddSerilog(_logger);
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+//if (app.Environment.IsDevelopment())
+//{
+app.UseSwagger();
+app.UseSwaggerUI();
+//}
 //? GLobal Exception handling----------------------------
 app.UseMiddleware<GlobalException>();
 app.UseHttpsRedirection();

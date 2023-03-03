@@ -33,8 +33,21 @@ namespace ECommerce.Controllers
             return Ok(res);
         }
 
-        [HttpPost("add-customer")]
+        [HttpPost("add/customer")]
         public async Task<IActionResult> AddCustomer(UserDTO obj)
+        {
+            if (obj == null)
+            {
+                return BadRequest("Name cant be null");
+            }
+            int role = 3;
+            var res = await _user.AddUserasync(obj, role);
+
+            return Ok(res);
+        }
+
+        [HttpPost("add-suppiler"), Authorize(Roles = "Admin")]
+        public async Task<IActionResult> AddSuppiler(UserDTO obj)
         {
             if (obj == null)
             {
@@ -42,19 +55,6 @@ namespace ECommerce.Controllers
             }
             int role = 2;
             var res = await _user.AddUserasync(obj, role);
-
-            return Ok(res);
-        }
-
-        [HttpPost("add-suppiler"), Authorize(Roles = "Admin")]
-        public IActionResult AddSuppiler(UserDTO obj)
-        {
-            if (obj == null)
-            {
-                return BadRequest("Name cant be null");
-            }
-            int role = 3;
-            var res = _user.AddUserasync(obj, role);
 
             return Ok(res);
         }
