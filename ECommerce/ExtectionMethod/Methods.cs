@@ -30,6 +30,16 @@ namespace ECommerce.ExtectionMethod
             return services;
         }
 
+        public static IServiceCollection AddDatabaseAzure(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddDbContext<EcDbContext>(options => options
+            .UseSqlServer(configuration.GetConnectionString("DefaultConnectionAzure")
+            , dbOpt => dbOpt.MigrationsAssembly(Assembly.GetExecutingAssembly().GetName().Name))
+);
+
+            return services;
+        }
+
         #endregion Database Conection
 
         #region Dependency injection

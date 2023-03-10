@@ -2,7 +2,7 @@ using AutoMapper;
 using BusinessLayer.RepositoryImplementation;
 using ECommerce.ExtectionMethod;
 using ECommerce.GlobalException;
-using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.Extensions.Azure;
 using SendGrid.Extensions.DependencyInjection;
 using Serilog;
 
@@ -10,7 +10,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddDatabase(builder.Configuration)
+builder.Services
+    .AddDatabase(builder.Configuration)
+    //.AddDatabaseAzure(builder.Configuration)
     .AddServices()
     .AddJWT(builder.Configuration)
     .AddNewtonJson()
@@ -22,6 +24,17 @@ builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+//?------------------------COres-------------------------------------------------------
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+                      policy =>
+                      {
+                          policy.AllowAnyOrigin();
+                      });
+});
 
 //?--------------------------------------SendGrid-------------------------------------------------------
 
@@ -58,6 +71,11 @@ var _logger = new LoggerConfiguration()
 .MinimumLevel.Debug()
     .WriteTo.MSSqlServer(con, table).CreateLogger();
 builder.Logging.AddSerilog(_logger);
+builder.Services.AddAzureClients(clientBuilder =>
+{
+    clientBuilder.AddBlobServiceClient(builder.Configuration["ConnectionStrings:AzureBlobStorage:blob"], preferMsi: true);
+    clientBuilder.AddQueueServiceClient(builder.Configuration["ConnectionStrings:AzureBlobStorage:queue"], preferMsi: true);
+});
 
 //Log.Logger = new LoggerConfiguration()
 //    .MinimumLevel.Debug()
@@ -68,14 +86,15 @@ builder.Logging.AddSerilog(_logger);
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+//if (app.Environment.IsDevelopment())
+//{
+app.UseSwagger();
+app.UseSwaggerUI();
+//}
 //? GLobal Exception handling----------------------------
 app.UseMiddleware<GlobalException>();
 app.UseHttpsRedirection();
+app.UseCors(MyAllowSpecificOrigins);
 
 app.UseAuthentication();
 app.UseAuthorization();

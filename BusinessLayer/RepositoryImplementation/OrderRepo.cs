@@ -196,7 +196,7 @@ namespace BusinessLayer.RepositoryImplementation
                     "<table>		" +
                     "<thead>" +
                     "<tr>" +
-                    
+
                     "<th>Product Name</th>" +
                     "<th>Quantity</th>" +
                     "<th>Price</th>" +
@@ -288,7 +288,7 @@ namespace BusinessLayer.RepositoryImplementation
                     "<table>		" +
                     "<thead>" +
                     "<tr>" +
-                  
+
                     "<th>Product Name</th>" +
                     "<th>Quantity</th>" +
                     "<th>Price</th>" +
