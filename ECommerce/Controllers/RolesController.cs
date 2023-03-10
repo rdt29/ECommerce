@@ -34,7 +34,7 @@ namespace ECommerce.Controllers
             //    //return (obj);
             //}
             var res = await _role.AddRolesAsync(obj, userId);
-            return res;
+            return (res);
         }
 
         [HttpGet("view-role")]
