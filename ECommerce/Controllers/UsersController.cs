@@ -17,6 +17,8 @@ namespace ECommerce.Controllers
             _user = user;
         }
 
+
+        #region GetAlluser
         [HttpGet("get-all-users"), Authorize(Roles = "Admin")]
         public async Task<IList<UserResponseDTO>> GetAll()
         {
@@ -25,6 +27,10 @@ namespace ECommerce.Controllers
             return res;
         }
 
+        #endregion GetAllUser
+
+        #region delete-user-by-id
+
         [HttpDelete("delete-user-by-id")]
         public async Task<IActionResult> DeleteUser(int id)
         {
@@ -32,6 +38,10 @@ namespace ECommerce.Controllers
 
             return Ok(res);
         }
+
+        #endregion delete-user-by-id
+
+        #region AddCustomer
 
         [HttpPost("add/customer")]
         public async Task<UserDTO> AddCustomer(UserDTO obj)
@@ -46,6 +56,11 @@ namespace ECommerce.Controllers
             return (res);
         }
 
+        #endregion AddCustomer 
+
+
+        #region AddSuppiler 
+
         [HttpPost("add-suppiler"), Authorize(Roles = "Admin")]
         public async Task<UserDTO> AddSuppiler(UserDTO obj)
         {
@@ -59,6 +74,11 @@ namespace ECommerce.Controllers
             return (res);
         }
 
+        #endregion AddSuplier
+
+
+        #region Login
+
         [HttpPost("login")]
         public IActionResult Login(int UserId)
         {
@@ -69,5 +89,8 @@ namespace ECommerce.Controllers
             var res = _user.Login(UserId);
             return Ok(res);
         }
+
+
+        #endregion login
     }
 }
