@@ -25,9 +25,9 @@ namespace ECommerce.Controllers
         {
             int userId = 0;
 
-                string Uid = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                userId = Convert.ToInt32(Uid);
-            
+            string Uid = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            userId = Convert.ToInt32(Uid);
+
             //if (obj == null)
             //{
             //    //return ("Role Cant be Null")
