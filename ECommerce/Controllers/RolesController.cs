@@ -21,16 +21,20 @@ namespace ECommerce.Controllers
         }
 
         [HttpPost("add-role"), Authorize(Roles = "Admin")]
-        public async Task<IActionResult> AddRoles(RoleDTO obj)
+        public async Task<RoleDTO> AddRoles(RoleDTO obj)
         {
-            string Uid = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            int userId = Convert.ToInt32(Uid);
-            if (obj == null)
-            {
-                return BadRequest("Role Cant be Null");
-            }
+            int userId = 0;
+
+                string Uid = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                userId = Convert.ToInt32(Uid);
+            
+            //if (obj == null)
+            //{
+            //    //return ("Role Cant be Null")
+            //    //return (obj);
+            //}
             var res = await _role.AddRolesAsync(obj, userId);
-            return Ok(res);
+            return res;
         }
 
         [HttpGet("view-role")]

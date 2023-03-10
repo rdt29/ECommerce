@@ -2,18 +2,17 @@ using AutoMapper;
 using BusinessLayer.RepositoryImplementation;
 using ECommerce.ExtectionMethod;
 using ECommerce.GlobalException;
-using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.Extensions.Azure;
 using SendGrid.Extensions.DependencyInjection;
 using Serilog;
-using Microsoft.Extensions.Azure;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services
-    //.AddDatabase(builder.Configuration)
-    .AddDatabaseAzure(builder.Configuration)
+    .AddDatabase(builder.Configuration)
+    //.AddDatabaseAzure(builder.Configuration)
     .AddServices()
     .AddJWT(builder.Configuration)
     .AddNewtonJson()
@@ -25,6 +24,17 @@ builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+//?------------------------COres-------------------------------------------------------
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+                      policy =>
+                      {
+                          policy.AllowAnyOrigin();
+                      });
+});
 
 //?--------------------------------------SendGrid-------------------------------------------------------
 
@@ -84,6 +94,7 @@ app.UseSwaggerUI();
 //? GLobal Exception handling----------------------------
 app.UseMiddleware<GlobalException>();
 app.UseHttpsRedirection();
+app.UseCors(MyAllowSpecificOrigins);
 
 app.UseAuthentication();
 app.UseAuthorization();
