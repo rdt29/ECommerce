@@ -20,12 +20,15 @@ namespace BusinessLayer.RepositoryImplementation
         private readonly IMapper _mapper;
         private readonly IMemoryCache _memoryCache;
 
-        public UsersRepo(EcDbContext db, IConfiguration configuration, IMapper mapper, IMemoryCache memoryCache)
+        private readonly IMailService _mail;
+
+        public UsersRepo(EcDbContext db, IConfiguration configuration, IMapper mapper, IMemoryCache memoryCache, IMailService mailService)
         {
             _configuration = configuration;
             _mapper = mapper;
             _db = db;
             _memoryCache = memoryCache;
+            _mail = mailService;
         }
 
         public async Task<UserDTO> AddUserasync(UserDTO obj, int role)
@@ -47,6 +50,10 @@ namespace BusinessLayer.RepositoryImplementation
                 _db.Users.Add(user);
                 await _db.SaveChangesAsync();
 
+                //var htmlcontent = "<h3> Email :- " + obj.Email + " Password :-" + obj.Name + " </h3>";
+                //var planeText = "Email :- " + obj.Email + " Password :- " + obj.Name;
+
+                //_mail.MailSend("rdt2922@gmail.com", htmlcontent, planeText, "New User");
                 return (_mapper.Map<UserDTO>(user));
             }
             catch (Exception)

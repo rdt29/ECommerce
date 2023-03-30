@@ -38,6 +38,7 @@ namespace ECommerce.Controllers
         }
 
         [HttpGet("view-role")]
+        [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Any)]
         public async Task<IActionResult> ViewRoles()
         {
             var res = await _role.ViewRolesAsync();

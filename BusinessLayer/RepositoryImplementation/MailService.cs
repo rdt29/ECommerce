@@ -1,18 +1,11 @@
 ﻿using BusinessLayer.Repository;
-using SendGrid.Helpers.Mail;
-using SendGrid;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
-using SendGrid.Helpers.Mail.Model;
-using Microsoft.AspNetCore.Http;
-using Azure;
-using MimeKit;
-using Microsoft.Extensions.Options;
 using MailKit.Net.Smtp;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
+using MimeKit;
+using SendGrid;
+using SendGrid.Helpers.Mail;
 
 namespace BusinessLayer.RepositoryImplementation
 {

@@ -70,9 +70,9 @@ namespace BusinessLayer.RepositoryImplementation
 
                 var CacheKey = "GetRole";
 
-                if (!_memoryCache.TryGetValue(CacheKey, out List<RoleResponseDTO> Data))
-                {
-                     Data = _db.Roles.Include(x => x.users)
+                //if (!_memoryCache.TryGetValue(CacheKey, out List<RoleResponseDTO> Data))
+                //{
+                     var Data = _db.Roles.Include(x => x.users)
                     .Select(x => new RoleResponseDTO()
                     {
                         ID = x.ID,
@@ -87,15 +87,15 @@ namespace BusinessLayer.RepositoryImplementation
 
                     //?setting cache to local memory
 
-                    var cacheExpireOption = new MemoryCacheEntryOptions
-                    {
-                        AbsoluteExpiration = DateTime.Now.AddSeconds(59),
-                        Priority = CacheItemPriority.High,
-                        // will delete data if not call in 30 sec
-                        SlidingExpiration = TimeSpan.FromSeconds(30),
-                    };
-                    _memoryCache.Set(CacheKey, Data, cacheExpireOption);
-                }
+                //    var cacheExpireOption = new MemoryCacheEntryOptions
+                //    {
+                //        AbsoluteExpiration = DateTime.Now.AddSeconds(59),
+                //        Priority = CacheItemPriority.High,
+                //        // will delete data if not call in 30 sec
+                //        SlidingExpiration = TimeSpan.FromSeconds(30),
+                //    };
+                //    _memoryCache.Set(CacheKey, Data, cacheExpireOption);
+                //}
 
 
                 return Data;
