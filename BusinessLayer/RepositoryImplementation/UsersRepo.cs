@@ -4,8 +4,10 @@ using DataAcessLayer.DBContext;
 using DataAcessLayer.DTO;
 using DataAcessLayer.Entity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
@@ -16,12 +18,17 @@ namespace BusinessLayer.RepositoryImplementation
         private readonly EcDbContext _db;
         private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
+        private readonly IMemoryCache _memoryCache;
 
-        public UsersRepo(EcDbContext db, IConfiguration configuration, IMapper mapper)
+        private readonly IMailService _mail;
+
+        public UsersRepo(EcDbContext db, IConfiguration configuration, IMapper mapper, IMemoryCache memoryCache, IMailService mailService)
         {
             _configuration = configuration;
             _mapper = mapper;
             _db = db;
+            _memoryCache = memoryCache;
+            _mail = mailService;
         }
 
         public async Task<UserDTO> AddUserasync(UserDTO obj, int role)
@@ -43,6 +50,10 @@ namespace BusinessLayer.RepositoryImplementation
                 _db.Users.Add(user);
                 await _db.SaveChangesAsync();
 
+                //var htmlcontent = "<h3> Email :- " + obj.Email + " Password :-" + obj.Name + " </h3>";
+                //var planeText = "Email :- " + obj.Email + " Password :- " + obj.Name;
+
+                //_mail.MailSend("rdt2922@gmail.com", htmlcontent, planeText, "New User");
                 return (_mapper.Map<UserDTO>(user));
             }
             catch (Exception)
@@ -53,14 +64,30 @@ namespace BusinessLayer.RepositoryImplementation
 
         public async Task<IList<UserResponseDTO>> AllUsers()
         {
-            var data = await _db.Users.Include(x => x.Roles).Select(x => new UserResponseDTO()
-            {
-                ID = x.ID,
-                Name = x.Name,
-                RoleName = x.Roles.RoleName
-            }).ToListAsync();
+            var CacheKey = "GetAllUser";
 
-            return data;
+            if (!_memoryCache.TryGetValue(CacheKey, out List<UserResponseDTO> Data))
+            {
+                Data = await _db.Users.Include(x => x.Roles).Select(x => new UserResponseDTO()
+                {
+                    ID = x.ID,
+                    Name = x.Name,
+                    RoleName = x.Roles.RoleName
+                }).ToListAsync();
+
+                //?setting cache to local memory
+
+                var cacheExpireOption = new MemoryCacheEntryOptions
+                {
+                    AbsoluteExpiration = DateTime.Now.AddSeconds(59),
+                    Priority = CacheItemPriority.High,
+                    // will delete data if not call in 30 sec
+                    SlidingExpiration = TimeSpan.FromSeconds(30),
+                };
+                _memoryCache.Set(CacheKey, Data, cacheExpireOption);
+            }
+
+            return Data;
         }
 
         public string Login(int UserId)

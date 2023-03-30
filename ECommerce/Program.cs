@@ -24,16 +24,19 @@ builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddMemoryCache();
+//?---------------------------------------------COres-------------------------------------------------------
 
-//?------------------------COres-------------------------------------------------------
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: MyAllowSpecificOrigins,
                       policy =>
                       {
-                          policy.AllowAnyOrigin();
-                      });
+                          policy.AllowAnyOrigin()
+                          .AllowAnyHeader();
+                      }
+                      );
 });
 
 //?--------------------------------------SendGrid-------------------------------------------------------
@@ -65,23 +68,25 @@ builder.Services.AddAutoMapper(typeof(Program));
 #region Serilog Configuration
 
 string con = builder.Configuration.GetConnectionString("DefaultConnection");
+//string con = builder.Configuration.GetConnectionString("DefaultConnectionAzure");
 string table = "Logs";
 
 var _logger = new LoggerConfiguration()
 .MinimumLevel.Debug()
     .WriteTo.MSSqlServer(con, table).CreateLogger();
 builder.Logging.AddSerilog(_logger);
-builder.Services.AddAzureClients(clientBuilder =>
-{
-    clientBuilder.AddBlobServiceClient(builder.Configuration["ConnectionStrings:AzureBlobStorage:blob"], preferMsi: true);
-    clientBuilder.AddQueueServiceClient(builder.Configuration["ConnectionStrings:AzureBlobStorage:queue"], preferMsi: true);
-});
 
 //Log.Logger = new LoggerConfiguration()
 //    .MinimumLevel.Debug()
 //    .WriteTo.MSSqlServer(con, table).CreateLogger();
 
 #endregion Serilog Configuration
+
+builder.Services.AddAzureClients(clientBuilder =>
+{
+    clientBuilder.AddBlobServiceClient(builder.Configuration["ConnectionStrings:AzureBlobStorage:blob"], preferMsi: true);
+    clientBuilder.AddQueueServiceClient(builder.Configuration["ConnectionStrings:AzureBlobStorage:queue"], preferMsi: true);
+});
 
 var app = builder.Build();
 
@@ -95,7 +100,7 @@ app.UseSwaggerUI();
 app.UseMiddleware<GlobalException>();
 app.UseHttpsRedirection();
 app.UseCors(MyAllowSpecificOrigins);
-
+app.UseResponseCaching();
 app.UseAuthentication();
 app.UseAuthorization();
 

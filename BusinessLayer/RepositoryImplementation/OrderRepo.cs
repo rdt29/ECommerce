@@ -133,6 +133,7 @@ namespace BusinessLayer.RepositoryImplementation
                     orderdetail.ProductId = i;
                     orderdetail.CreatedAt = DateTime.Now;
                     orderdetail.CreatedBy = userid;
+
                     orderDetails.Add(orderdetail);
                 };
 

@@ -6,6 +6,7 @@ using DataAcessLayer.Entity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ActionConstraints;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,15 +17,22 @@ namespace BusinessLayer.RepositoryImplementation
 {
     public class RolesRepo : IRoles
     {
+        #region DependencyInjection
         private readonly EcDbContext _db;
         private readonly IMapper _mapper;
+        private readonly IMemoryCache _memoryCache;
+        #endregion DependencyInjection
 
-        public RolesRepo(EcDbContext db, IMapper mapper)
+
+        public RolesRepo(EcDbContext db, IMapper mapper, IMemoryCache memoryCache)
         {
             _db = db;
             _mapper = mapper;
+            _memoryCache = memoryCache; 
         }
 
+
+        #region AddRole
         public async Task<RoleDTO> AddRolesAsync(RoleDTO obj, int userId)
         {
             try
@@ -50,12 +58,21 @@ namespace BusinessLayer.RepositoryImplementation
                 throw;
             }
         }
+        #endregion AddRole
+
+
+        #region ViewRole
 
         public async Task<IEnumerable<RoleResponseDTO>> ViewRolesAsync()
         {
             try
             {
-                var obj = _db.Roles.Include(x => x.users)
+
+                var CacheKey = "GetRole";
+
+                //if (!_memoryCache.TryGetValue(CacheKey, out List<RoleResponseDTO> Data))
+                //{
+                     var Data = _db.Roles.Include(x => x.users)
                     .Select(x => new RoleResponseDTO()
                     {
                         ID = x.ID,
@@ -68,12 +85,26 @@ namespace BusinessLayer.RepositoryImplementation
                     })
                     .ToList();
 
-                return obj;
+                    //?setting cache to local memory
+
+                //    var cacheExpireOption = new MemoryCacheEntryOptions
+                //    {
+                //        AbsoluteExpiration = DateTime.Now.AddSeconds(59),
+                //        Priority = CacheItemPriority.High,
+                //        // will delete data if not call in 30 sec
+                //        SlidingExpiration = TimeSpan.FromSeconds(30),
+                //    };
+                //    _memoryCache.Set(CacheKey, Data, cacheExpireOption);
+                //}
+
+
+                return Data;
             }
             catch (Exception)
             {
                 throw;
             }
         }
+        #endregion ViewRole
     }
 }
