@@ -57,12 +57,11 @@
             },
             {
               "sku": {
-                "name": "GP_Gen5",
-                "tier": "GeneralPurpose",
-                "family": "Gen5",
-                "capacity": 2
+                "name": "Basic",
+                "tier": "Basic",
+                "capacity": 5
               },
-              "kind": "v12.0,user,vcore",
+              "kind": "v12.0,user",
               "location": "[parameters('resourceLocation')]",
               "name": "rdtecommercedbserver/RdtEcommerceDB",
               "type": "Microsoft.Sql/servers/databases",
