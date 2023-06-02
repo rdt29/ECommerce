@@ -109,7 +109,7 @@ namespace BusinessLayer.RepositoryImplementation
                         Id = i.Id,
                         ProductName = i.ProductName,
                         ProductDescription = i.ProductDescription,
-                        CategoryID = i.CategoryID,
+                        CategoryName = i.Category.CategoryName,
 
                         price = i.price,
                     };

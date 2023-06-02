@@ -50,7 +50,7 @@ namespace ECommerce.Controllers
             //{
             //    return BadRequest("Name cant be null");
             //}
-            int role = 3;
+            int role = 2;
             var res = await _user.AddUserasync(obj, role);
 
             return (res);
@@ -68,7 +68,7 @@ namespace ECommerce.Controllers
             //{
             //    return BadRequest("Name cant be null");
             //}
-            int role = 2;
+            int role = 3;
             var res = await _user.AddUserasync(obj, role);
 
             return (res);

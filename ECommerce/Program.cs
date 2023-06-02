@@ -11,8 +11,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services
-    // .AddDatabase(builder.Configuration)
-    .AddDatabaseAzure(builder.Configuration)
+     .AddDatabase(builder.Configuration)
+    //.AddDatabaseAzure(builder.Configuration)
     .AddServices()
     .AddJWT(builder.Configuration)
     .AddNewtonJson()
@@ -34,7 +34,8 @@ builder.Services.AddCors(options =>
                       policy =>
                       {
                           policy.AllowAnyOrigin()
-                          .AllowAnyHeader();
+                          .AllowAnyHeader()
+                          .AllowAnyMethod();
                       }
                       );
 });

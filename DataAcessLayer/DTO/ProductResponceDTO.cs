@@ -15,6 +15,6 @@ namespace DataAcessLayer.DTO
         public string ImageURL { get; set; }
         public int price { get; set; }
         public string ProductDescription { get; set; }
-        public int CategoryID { get; set; }
+        public string CategoryName { get; set; }
     }
 }
