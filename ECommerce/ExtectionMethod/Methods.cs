@@ -107,7 +107,7 @@ namespace ECommerce.ExtectionMethod
                     In = ParameterLocation.Header,
                     Name = "Authorization",
                     Type = SecuritySchemeType.ApiKey,
-                    //Scheme = "Bearer"
+                 
                 });
                 options.OperationFilter<SecurityRequirementsOperationFilter>();
             }

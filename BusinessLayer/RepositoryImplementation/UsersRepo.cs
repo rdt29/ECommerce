@@ -68,7 +68,7 @@ namespace BusinessLayer.RepositoryImplementation
 
             if (!_memoryCache.TryGetValue(CacheKey, out List<UserResponseDTO> Data))
             {
-                Data = await _db.Users.Include(x => x.Roles).Select(x => new UserResponseDTO()
+                Data = await _db.Users.Include(x => x.Roles).OrderBy(x=>x.ID).Select(x => new UserResponseDTO()
                 {
                     ID = x.ID,
                     Name = x.Name,
